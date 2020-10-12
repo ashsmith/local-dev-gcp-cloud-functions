@@ -1,0 +1,8 @@
+#!/bin/bash
+
+VERB=$1
+PROJECT=$2
+
+terraform init -reconfigure infra
+
+terraform $VERB -var-file=./infra/projects/${PROJECT}.tfvars -state=./infra/state/${PROJECT}-terraform.tfstate infra

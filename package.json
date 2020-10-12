@@ -11,13 +11,22 @@
   "keywords": [],
   "scripts": {
     "start": "functions-framework --source=build/src/ --target=index",
-    "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec yarn run start\"",
+    "watch": "concurrently \"tsc -w\" \"nodemon --watch ./build/ --exec yarn start\"",
     "test": "mocha -r ts-node/register test/**/*.test.ts",
     "lint": "gts lint",
     "clean": "gts clean",
-    "compile": "tsc",
+    "compile": "tsc && yarn tf:format",
     "fix": "gts fix",
-    "prepare": "yarn run compile"
+    "prepare": "yarn compile && zip -r functions.zip build && zip -g functions.zip {package.json,yarn.lock}",
+    "tf:format": "terraform fmt -recursive infra",
+    "tf:plan": "yarn prepare && ./infra/tf plan",
+    "tf:plan:test": "yarn tf:plan test",
+    "tf:plan:prod": "yarn tf:plan production",
+    "tf:deploy": "yarn prepare && ./infra/tf apply",
+    "tf:deploy:test": "yarn tf:deploy test",
+    "tf:deploy:prod": "yarn tf:deploy production",
+    "tf:destroy:test": "./infra/tf destroy test",
+    "tf:destroy:prod": "./infra/tf destroy production"
   },
   "devDependencies": {
     "@google-cloud/functions-framework": "^1.7.1",
